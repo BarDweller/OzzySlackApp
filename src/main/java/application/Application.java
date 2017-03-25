@@ -15,6 +15,9 @@
  *******************************************************************************/ 
 package application;
 
+import javax.ws.rs.ApplicationPath;
+
+@ApplicationPath("/namefixer")
 public class Application {
 
 }

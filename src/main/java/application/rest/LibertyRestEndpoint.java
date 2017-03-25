@@ -15,19 +15,42 @@
  *******************************************************************************/ 
 package application.rest;
 
-import javax.ws.rs.ApplicationPath;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.core.Application;
+import java.io.StringReader;
 
-@ApplicationPath("rest")
-@Path("/")
+import javax.json.Json;
+import javax.json.JsonObject;
+import javax.json.JsonReader;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.Application;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
+
+@Path("/events")
 public class LibertyRestEndpoint extends Application {
 
-    @GET
-    @Path("/")
-    public String hello() {
-        return "Hello from the REST endpoint!";
+    @POST
+    @Produces("text/plain")
+    @Consumes("application/json")
+    public Response event(String json) {
+    	
+    	JsonReader r = Json.createReader(new StringReader(json));
+    	JsonObject arg = r.readObject();
+    	
+    	switch(arg.getString("type")){
+    		case "url_verification":{
+    			return Response.ok(arg.getString("challenge")).build();
+    		}
+    		default:{
+    			System.out.println("Unknown event type : "+arg.getString("type"));
+    			System.out.println("Full JSON: "+ arg.toString());
+    		}
+    	}
+    	
+    	
+        return Response.status(Status.NOT_FOUND).build();
     }
 
 }
